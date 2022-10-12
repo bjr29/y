@@ -1,4 +1,5 @@
 use std::env::args;
+use std::fmt::Pointer;
 use std::fs;
 use std::sync::{Mutex, MutexGuard};
 use lazy_static::lazy_static;
@@ -63,16 +64,13 @@ fn parse_code(code: String) -> Vec<Instruction> {
 
 fn execute_code(instructions: &Vec<Instruction>) {
     let mut line_numbers = vec![0];
+    let mut app = get_app_data();
 
     loop {
-        let mut app = get_app_data();
-
         let instruction = &instructions[*line_numbers.last().unwrap() as usize];
 
         match instruction {
             Instruction::Var(name, value) => {
-
-
                 app.values.insert(name.clone(), value.clone());
             }
             Instruction::Add(name, value) => {
@@ -88,11 +86,12 @@ fn execute_code(instructions: &Vec<Instruction>) {
             }
             Instruction::Print(value) => {
                 let string = String::from_utf8(value.as_bytes())
-                    .unwrap();
+                .unwrap();
 
                 println!("{}", string);
             },
             Instruction::PrintChar(value) => {
+                println!("HERE {}", value.as_byte());
                 print!("PRINT {}", value.as_byte() as char);
             },
             Instruction::Input(name) => {}
@@ -111,12 +110,12 @@ fn execute_code(instructions: &Vec<Instruction>) {
             Instruction::FileWrite(path, name, value) => {}
         };
 
+        if line_numbers[0] >= instructions.len() - 1 {
+            return;
+        }
+
         let length = line_numbers.len();
         line_numbers[length - 1] += 1;
-
-        if line_numbers[0] >= instructions.len() {
-            break;
-        }
     }
 }
 
