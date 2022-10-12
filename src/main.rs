@@ -33,7 +33,7 @@ fn main() {
 }
 
 fn parse_code(code: String) -> Vec<Instruction> {
-    let instructions = vec!();
+    let mut instructions = vec!();
 
     for line in code.split(";") {
         let mut splits = line.split_whitespace();
@@ -55,20 +55,24 @@ fn parse_code(code: String) -> Vec<Instruction> {
             args.push(Arg::parse(&string_args[i]));
         }
 
-        Instruction::parse(instruction, args);
+        instructions.push(Instruction::parse(instruction, args));
     }
 
     instructions
 }
 
 fn execute_code(instructions: &Vec<Instruction>) {
+    let mut line_numbers = vec![0];
+
     loop {
         let mut app = get_app_data();
 
-        let instruction = &instructions[*app.line_numbers.last().unwrap() as usize];
+        let instruction = &instructions[*line_numbers.last().unwrap() as usize];
 
         match instruction {
             Instruction::Var(name, value) => {
+
+
                 app.values.insert(name.clone(), value.clone());
             }
             Instruction::Add(name, value) => {
@@ -86,8 +90,11 @@ fn execute_code(instructions: &Vec<Instruction>) {
                 let string = String::from_utf8(value.as_bytes())
                     .unwrap();
 
-                print!("{}", string);
-            }
+                println!("{}", string);
+            },
+            Instruction::PrintChar(value) => {
+                print!("PRINT {}", value.as_byte() as char);
+            },
             Instruction::Input(name) => {}
             Instruction::Func(name, value_type, args) => {}
             Instruction::FuncEnd => {}
@@ -104,10 +111,10 @@ fn execute_code(instructions: &Vec<Instruction>) {
             Instruction::FileWrite(path, name, value) => {}
         };
 
-        let length = app.line_numbers.len();
-        app.line_numbers[length] += 1;
+        let length = line_numbers.len();
+        line_numbers[length - 1] += 1;
 
-        if app.line_numbers.last().unwrap() > &(instructions.len() as i32) {
+        if line_numbers[0] >= instructions.len() {
             break;
         }
     }
@@ -124,6 +131,6 @@ fn is_valid_var_name(string: &String) -> bool {
         && chars.clone().nth(0).unwrap().is_alphabetic()
 }
 
-fn get_var(var: String) -> Value {
+fn get_var_value(var: &String) -> Value {
     get_app_data().values.get(&*var).unwrap().clone()
 }
