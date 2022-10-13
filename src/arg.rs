@@ -1,3 +1,5 @@
+use std::fmt;
+use std::fmt::Display;
 use crate::comparison_operator::ComparisonOperator;
 use crate::is_valid_var_name;
 use crate::value::Value;
@@ -48,7 +50,7 @@ impl Arg {
     pub fn get_name(&self) -> String {
         match self {
             Arg::Name(value) => value,
-            _ => panic!("Failed to get name, actual value '{}'", self.get_type_name())
+            _ => panic!("Failed to get name, actual value '{self}'")
         }.to_string()
     }
 
@@ -56,30 +58,32 @@ impl Arg {
         match self.clone() {
             Arg::Value(value) => value,
             Arg::Name(value) => Value::Name(value),
-            _ => panic!("Failed to get value, actual value '{}'", self.get_type_name())
+            _ => panic!("Failed to get value, actual value '{self}'")
         }
     }
 
     pub fn get_type(&self) -> ValueType {
         match self.clone() {
             Arg::ValueType(value) => value,
-            _ => panic!("Failed to get type, actual value '{}'", self.get_type_name())
+            _ => panic!("Failed to get type, actual value '{self}'")
         }
     }
 
     pub fn get_op(&self) -> ComparisonOperator {
         match self.clone() {
             Arg::ComparisonOperator(value) => value,
-            _ => panic!("Failed to get operator', actual value '{}'", self.get_type_name())
+            _ => panic!("Failed to get operator', actual value '{self}'")
         }
     }
+}
 
-    fn get_type_name(&self) -> &str {
+impl Display for Arg {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self.clone() {
-            Arg::Value(_) => { "value" }
-            Arg::ValueType(_) => { "type" }
-            Arg::ComparisonOperator(_) => { "operator" }
-            Arg::Name(_) => { "name" }
+            Arg::Value(_) => { write!(f, "value") }
+            Arg::ValueType(_) => { write!(f, "type") }
+            Arg::ComparisonOperator(_) => { write!(f, "operator") }
+            Arg::Name(_) => { write!(f, "name") }
         }
     }
 }

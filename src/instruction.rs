@@ -7,6 +7,7 @@ pub enum Instruction {
     Var(String, Value),
     Add(String, Value),
     Print(Value),
+    PrintChar(Value),
     Input(Value),
     Func(String, ValueType, Vec<(ValueType, String, Value)>),
     FuncEnd,
@@ -31,6 +32,7 @@ impl Instruction {
             "VAR" => Instruction::Var(args[0].get_name(), args[1].get_value()),
             "ADD" => Instruction::Add(args[0].get_name(), args[1].get_value()),
             "PRINT" => Instruction::Print(args[0].get_value()),
+            "PRINT_CHAR" => Instruction::PrintChar(args[0].get_value()),
             "FUNC" => {
                 let mut func_args = vec!();
 
