@@ -1,5 +1,5 @@
 use std::fmt;
-use std::fmt::Display;
+use std::fmt::{Display, Formatter};
 use crate::{get_app_data, get_var_value, is_valid_var_name};
 
 #[derive(Clone)]
@@ -89,7 +89,7 @@ impl Value {
 }
 
 impl Display for Value {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         match self.clone() {
             Value::Name(value) => { write!(f, "name {value}") }
             Value::Byte(value) => { write!(f, "byte {value}") }

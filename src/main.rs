@@ -67,7 +67,7 @@ fn execute_code(instructions: &Vec<Instruction>) {
     let mut app = get_app_data();
 
     loop {
-        let instruction = &instructions[*line_numbers.last().unwrap() as usize];
+        let instruction = &instructions[line_numbers[line_numbers.len() - 1] as usize];
 
         match instruction {
             Instruction::Var(name, value) => {
@@ -85,14 +85,15 @@ fn execute_code(instructions: &Vec<Instruction>) {
                 app.values.insert(name.clone(), result);
             }
             Instruction::Print(value) => {
-                let string = String::from_utf8(value.as_bytes())
-                .unwrap();
+                let bytes = value.as_bytes();
+                let string = String::from_utf8_lossy(&bytes);
 
                 println!("{}", string);
             },
             Instruction::PrintChar(value) => {
-                println!("HERE {}", value.as_byte());
-                print!("PRINT {}", value.as_byte() as char);
+                let byte = [value.as_byte()];
+
+                print!("PRINT {}", String::from_utf8_lossy(&byte));
             },
             Instruction::Input(name) => {}
             Instruction::Func(name, value_type, args) => {}
@@ -116,6 +117,8 @@ fn execute_code(instructions: &Vec<Instruction>) {
 
         let length = line_numbers.len();
         line_numbers[length - 1] += 1;
+
+        println!("{}", line_numbers[length - 1]);
     }
 }
 
