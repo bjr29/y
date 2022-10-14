@@ -12,11 +12,12 @@
 11. `ELSE_IF [value] [comparison operator] [value];` An extra branch of the previous `IF` statement.
 12. `ELSE;` The default branch of `IF`.
 13. `END_IF;` Closes the `IF` body.
-14. `ARR_APPEND [name] [value] [index]?;` Adds value to the array with the name at the index.
-15. `ARR_REMOVE [name] [index];` Removes the value from the array at the index.
-16. `ARR_GET [name] [index] [name];` Gets the value from the array at the index and stores it in the variable.
-17. `FILE_READ [value] [name];` Reads the file content byte by byte.
-18. `FILE_WRITE [value] [name] [value];` Writes the file content byte by byte.
+14. `ARR_VAR [name] [array...]` Creates an array with the variable name, the array is passed like regular arguments.
+15. `ARR_APPEND [name] [value] [index]?;` Adds value to the array with the name at the index.
+16. `ARR_REMOVE [name] [index];` Removes the value from the array at the index.
+17. `ARR_GET [name] [index] [name];` Gets the value from the array at the index and stores it in the variable.
+18. `FILE_READ [value] [name];` Reads the file content byte by byte.
+19. `FILE_WRITE [value] [name] [value];` Writes the file content byte by byte.
 
 ## Keys
 

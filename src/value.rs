@@ -1,6 +1,7 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use crate::{get_app_data, get_var_value, is_valid_var_name};
+use std::sync::MutexGuard;
+use crate::{AppData, get_app_data, get_var_value, is_valid_var_name};
 
 #[derive(Clone)]
 pub enum Value {
@@ -45,43 +46,43 @@ impl Value {
         }
     }
 
-    pub fn as_byte(&self) -> u8 {
+    pub fn as_byte(&self, app: &MutexGuard<AppData>) -> u8 {
         match self {
             Value::Byte(value) => { *value }
-            Value::Name(var) => { get_var_value(var).as_byte() }
+            Value::Name(var) => { get_var_value(var, app).as_byte(app) }
             _ => panic!("Value is not a byte, actual value is a {self}")
         }
     }
 
-    pub fn as_int(&self) -> i32 {
+    pub fn as_int(&self, app: &MutexGuard<AppData>) -> i32 {
         match self {
             Value::Int(value) => { *value }
-            Value::Name(var) => { get_var_value(var).as_int() }
+            Value::Name(var) => { get_var_value(var, app).as_int(app) }
             _ => panic!("Value is not an int, actual value is a {self}")
         }
     }
 
-    pub fn as_float(&self) -> f32 {
+    pub fn as_float(&self, app: &MutexGuard<AppData>) -> f32 {
         match self {
             Value::Float(value) => { *value }
-            Value::Name(var) => { get_var_value(var).as_float() }
+            Value::Name(var) => { get_var_value(var, app).as_float(app) }
             _ => panic!("Value is not a float, actual value is a {self}")
         }
     }
 
-    pub fn as_array(&self) -> Vec<Value> {
+    pub fn as_array(&self, app: &MutexGuard<AppData>) -> Vec<Value> {
         match self {
             Value::Array(value) => { value.clone() }
-            Value::Name(var) => { get_var_value(var).as_array() }
+            Value::Name(var) => { get_var_value(var, app).as_array(app) }
             _ => panic!("Value is not an array, actual value is a {self}")
         }
     }
 
-    pub fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self, app: &MutexGuard<AppData>) -> Vec<u8> {
         let mut result = vec!();
 
-        for value in self.as_array() {
-            result.push(value.as_byte());
+        for value in self.as_array(app) {
+            result.push(value.as_byte(app));
         }
 
         result

@@ -71,29 +71,29 @@ fn execute_code(instructions: &Vec<Instruction>) {
 
         match instruction {
             Instruction::Var(name, value) => {
-                app.values.insert(name.clone(), value.clone());
+                let _ = &app.values.insert(name.clone(), value.clone());
             }
             Instruction::Add(name, value) => {
                 let result = match value {
-                    Value::Byte(x) => { Value::Byte(x + value.as_byte()) }
-                    Value::Int(x) => { Value::Int(x + value.as_int()) }
-                    Value::Float(x) => { Value::Float(x + value.as_float()) }
+                    Value::Byte(x) => { Value::Byte(x + value.as_byte(&app)) }
+                    Value::Int(x) => { Value::Int(x + value.as_int(&app)) }
+                    Value::Float(x) => { Value::Float(x + value.as_float(&app)) }
 
                     _ => panic!("Incompatible types to perform ADD operation")
                 };
 
-                app.values.insert(name.clone(), result);
+                &app.values.insert(name.clone(), result);
             }
             Instruction::Print(value) => {
-                let bytes = value.as_bytes();
+                let bytes = value.as_bytes(&app);
                 let string = String::from_utf8_lossy(&bytes);
 
                 println!("{}", string);
             },
             Instruction::PrintChar(value) => {
-                let byte = [value.as_byte()];
+                let byte = [value.as_byte(&app)];
 
-                print!("PRINT {}", String::from_utf8_lossy(&byte));
+                print!("{}", String::from_utf8_lossy(&byte));
             },
             Instruction::Input(name) => {}
             Instruction::Func(name, value_type, args) => {}
@@ -104,6 +104,9 @@ fn execute_code(instructions: &Vec<Instruction>) {
             Instruction::ElseIf(a, comparison_operator, b) => {}
             Instruction::Else => {}
             Instruction::EndIf => {}
+            Instruction::ArrVar(name, array) => {
+                let _ = &app.values.insert(name.clone(), Value::Array(array.clone()));
+            }
             Instruction::ArrAppend(name, value, i) => {}
             Instruction::ArrRemove(name, i) => {}
             Instruction::ArrGet(name, i, _) => {}
@@ -117,8 +120,6 @@ fn execute_code(instructions: &Vec<Instruction>) {
 
         let length = line_numbers.len();
         line_numbers[length - 1] += 1;
-
-        println!("{}", line_numbers[length - 1]);
     }
 }
 
@@ -133,6 +134,6 @@ fn is_valid_var_name(string: &String) -> bool {
         && chars.clone().nth(0).unwrap().is_alphabetic()
 }
 
-fn get_var_value(var: &String) -> Value {
-    get_app_data().values.get(&*var).unwrap().clone()
+fn get_var_value(var: &String, app: &MutexGuard<AppData>) -> Value {
+    app.values.get(&*var).unwrap().clone()
 }

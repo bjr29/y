@@ -17,6 +17,7 @@ pub enum Instruction {
     ElseIf(Value, ComparisonOperator, Value),
     Else,
     EndIf,
+    ArrVar(String, Vec<Value>),
     ArrAppend(String, Value, Value),
     ArrRemove(String, Value),
     ArrGet(String, Value, String),
@@ -52,6 +53,15 @@ impl Instruction {
                 }
 
                 Instruction::Call(args[0].get_name(), func_args)
+            },
+            "ARR_VAR" => {
+                let mut array = vec!();
+
+                for i in 1..args.len() {
+                    array.push(args[i].get_value());
+                }
+
+                Instruction::ArrVar(args[0].get_name(), array)
             },
             _ => panic!("Invalid instruction {instruction}")
         }
