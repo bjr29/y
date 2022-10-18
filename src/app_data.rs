@@ -2,14 +2,14 @@ use std::collections::HashMap;
 use crate::Value;
 
 pub struct AppData {
-    pub values: HashMap<String, Value>,
-    pub functions: HashMap<String, (i32, i32)>,
+    pub values: Vec<HashMap<String, Value>>,
+    pub functions: HashMap<String, (usize, usize, Vec<String>)>,
 }
 
 impl AppData {
     pub fn new() -> Self {
         Self {
-            values: HashMap::new(),
+            values: vec![HashMap::new()],
             functions: HashMap::new(),
         }
     }

@@ -1,4 +1,6 @@
-#[derive(Clone)]
+use crate::Value;
+
+#[derive(Clone, PartialEq, Debug)]
 pub enum ComparisonOperator {
     Equals,
     NotEqual,
@@ -18,6 +20,17 @@ impl ComparisonOperator {
             "<" => Ok(ComparisonOperator::Lesser),
             "<=" => Ok(ComparisonOperator::LesserOrEqual),
             _ => Err(())
+        }
+    }
+
+    pub fn process(&self, a: &Value, b: &Value) -> bool {
+        match self {
+            ComparisonOperator::Equals => { a == b }
+            ComparisonOperator::NotEqual => { a != b }
+            ComparisonOperator::Greater => { a > b }
+            ComparisonOperator::GreaterOrEqual => { a >= b }
+            ComparisonOperator::Lesser => { a < b }
+            ComparisonOperator::LesserOrEqual => { a <= b }
         }
     }
 }

@@ -17,7 +17,6 @@ impl Arg {
     pub fn parse(arg: &String) -> Self {
         match Value::parse(arg) {
             Ok(value) => {
-                println!("Parsing arg '{arg}' as a value");
                 return Arg::Value(value);
             }
             Err(_) => {}
@@ -25,7 +24,6 @@ impl Arg {
 
         match ValueType::parse(arg) {
             Ok(value) => {
-                println!("Parsing arg '{arg}' as a value type");
                 return Arg::ValueType(value);
             }
             Err(_) => {}
@@ -33,18 +31,16 @@ impl Arg {
 
         match ComparisonOperator::parse(arg) {
             Ok(value) => {
-                println!("Parsing arg '{arg}' as an operator");
                 return Arg::ComparisonOperator(value);
             }
             Err(_) => {}
         }
 
         if is_valid_var_name(arg) {
-            println!("Parsing arg '{arg}' as a variable");
             return Arg::Name(arg.to_string());
         }
 
-        panic!("Failed to parse argument")
+        panic!("Failed to parse argument {arg}");
     }
 
     pub fn get_name(&self) -> String {
