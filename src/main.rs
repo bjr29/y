@@ -41,8 +41,7 @@ fn parse_code(code: String) -> Vec<Instruction> {
     for line in code.split(";") {
         let mut splits = line.split_whitespace();
 
-        let instruction = match splits
-            .nth(0) {
+        let instruction = match splits.nth(0) {
             None => { continue }
             Some(value) => { value }
         };
@@ -98,12 +97,19 @@ fn execute_code(instructions: &Vec<Instruction>) {
                 create_var(&mut app, name.to_string(), value.clone());
             }
             Instruction::Add(name, value) => {
-                let result = match value {
-                    Value::Byte(x) => { Value::Byte(x + value.as_byte(&app).unwrap()) }
-                    Value::Int(x) => { Value::Int(x + value.as_int(&app).unwrap()) }
-                    Value::Float(x) => { Value::Float(x + value.as_float(&app).unwrap()) }
+                let a = get_var_value(name, &app);
+                let b = match value {
+                    Value::Name(value) => { Some(get_var_value(value, &app)) }
+                    _ => None
+                };
+                let checked_value = b.unwrap_or_else(|| value.clone());
 
-                    _ => panic!("Incompatible types ({} & {}) to perform ADD operation", get_var_value(name, &app), value)
+                let result = match checked_value {
+                    Value::Byte(x) => { Value::Byte(x + a.as_byte(&app).unwrap()) }
+                    Value::Int(x) => { Value::Int(x + a.as_int(&app).unwrap()) }
+                    Value::Float(x) => { Value::Float(x + a.as_float(&app).unwrap()) }
+
+                    _ => panic!("Incompatible types ({a} & {checked_value}) to perform ADD operation")
                 };
 
                 create_var(&mut app, name.to_string(), result);
@@ -124,13 +130,13 @@ fn execute_code(instructions: &Vec<Instruction>) {
 
                     println!("{result}");
 
-                } else if let Ok(x) = value.as_array(&app) {
-                    println!("{:?}", x);
-
                 } else if let Ok(x) = value.as_bytes(&app) {
                     let result = String::from_utf8_lossy(&x);
 
                     println!("{result}");
+
+                } else if let Ok(x) = value.as_array(&app) {
+                    println!("{:?}", x);
 
                 } else {
                     println!("null");
