@@ -72,7 +72,7 @@ fn save_functions(instructions: &Vec<Instruction>) {
 
         match instruction {
             Instruction::Func(name, args) => {
-                previous = (name.to_string(), i + 1, args.clone());
+                previous = (name.to_string(), i, args.clone());
             }
             Instruction::FuncEnd => {
                 app.functions.insert(previous.clone().0, (previous.clone().1, i + 1, previous.clone().2));
@@ -90,7 +90,7 @@ fn execute_code(instructions: &Vec<Instruction>) {
     loop {
         let instruction = &instructions[*line_numbers.last().unwrap()];
 
-        println!("Line numbers: {line_numbers:?}");
+        // println!("Line numbers: {line_numbers:?}");
 
         match instruction {
             Instruction::Var(name, value) => {
@@ -150,7 +150,10 @@ fn execute_code(instructions: &Vec<Instruction>) {
                 close_scope(&mut app, &mut line_numbers);
             }
             Instruction::Return(value) => {
-                create_var(&mut app, returns.pop().unwrap(), value.clone());
+                let checked_value = value.get_from_name(&app).unwrap_or_else(|()| value.clone());
+
+                close_scope(&mut app, &mut line_numbers);
+                create_var(&mut app, returns.pop().unwrap(), checked_value);
             }
             Instruction::Call(name, var, args) => {
                 let function = &app.functions.get(name).unwrap().clone();
@@ -166,7 +169,7 @@ fn execute_code(instructions: &Vec<Instruction>) {
                     create_var(&mut app, arg_name.clone(), arg.clone());
                 }
 
-                println!("Vars: {:?}", app.values);
+                // println!("Vars: {:?}", app.values);
             }
             Instruction::If(a, comparison_operator, b) => {}
             Instruction::ElseIf(a, comparison_operator, b) => {}

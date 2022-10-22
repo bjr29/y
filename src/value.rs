@@ -100,6 +100,13 @@ impl Value {
 
         Ok(result)
     }
+
+    pub fn get_from_name(&self, app: &MutexGuard<AppData>) -> Result<Value, ()> {
+        match self {
+            Value::Name(x) => { Ok(get_var_value(x, &app)) }
+            _ => { Err(()) }
+        }
+    }
 }
 
 impl Display for Value {
@@ -110,7 +117,7 @@ impl Display for Value {
             Value::Int(value) => { write!(f, "int {value}") }
             Value::Float(value) => { write!(f, "float {value}") }
             Value::Bool(value) => { write!(f, "bool {value}") }
-            Value::Array(value) => { write!(f, "array") }
+            Value::Array(value) => { write!(f, "array {value:?}") }
             Value::Null => { write!(f, "null") }
         }
     }
